@@ -1,44 +1,8 @@
+# -*- coding: utf-8 -*-
 import os
 import sys
+from .dvtDecimalTools import *
 
-def isInteger(n, tolerance=1e-2):
-    return abs(n - round(n)) <= tolerance
-
-# lqp : liste des quotients partiels
-# càd les termes du dvt en fractions continues
-def ratApp(lqp):
-        if len(lqp) == 1:
-            return dvtDecimal(lqp[0], 1)
-        else:
-            p = [lqp[0], lqp[1] * lqp[0] + 1]
-            q = [1, lqp[1]]
-            m = 2
-            while m < len(lqp):
-                p += [lqp[m] * p[m-1] + p[m - 2]]
-                q += [lqp[m] * q[m-1] + q[m - 2]]
-                m += 1
-            return [dvtDecimal(r, s) for r, s in zip(p, q)]
-
-# fraction continue de racine (d'un entier)
-# à améliorer en sachant qu'arriver à 2*a1 signifie
-# avoir trouver toutes la partie périodique
-# à utiliser genre :
-# contFractionQ(math.sqrt(2))
-# contFractionQ((1+math.sqrt(5))/2)
-def contFractionQ(racine):
-    r = racine
-    e = int(r)
-    lFC = [e]
-    lSous = [ ]
-    # 4 chiffres après la virgule
-    s  = round(r - e, 4)
-    while s not in lSous:
-        lSous.append(s)
-        r = 1 / (r - e)
-        e = int(r)
-        lFC.append(e)
-        s = round(r - e, 4)
-    return lFC
 
 class dvtDecimal:
     """classe d'écriture d'un nombre en fraction
@@ -188,7 +152,8 @@ class dvtDecimal:
         a, b = self.__pInit, self.__qInit
         # on les rend positives
         a, b = abs(a), abs(b)
-        if a > b: a, b = b, a
+        if a > b:
+            a, b = b, a
         while b != 0:
             a, b = b, a % b
         self.gcd = a
@@ -310,14 +275,23 @@ class dvtDecimal:
                 resultat += rpc
             resultat += rpc[:(n-lpI) % lpP]
         return resultat
-
+   
     def isDecimal(self):
         return self.repPart == [0]
 
     def fraction(self):
         return str(self.__pInit) + "/" + str(self.__qInit)
 
-    
+    def toTeX(self):
+        bs = "\\"
+        f = "{" + str(self.__pInit) + bs + "over" + str(self.__qInit) + "}"
+        e, p, q = self.mixedF()
+        mF = "{" + str(e) + "\\raise.21em\hbox{$\\scriptscriptstyle\\frac{" + str(p) + "}{" + str(q) + "}$}}"
+        #      
+        eD = str(e) + str(self.irrPart()[1:]) + \
+            r"\overline{" + str(self.repPartC()) + "}"
+        return [f, mF, eD]
+
 ####################################################################
 ####################################################################
     # def __augmentation2(d, f, k, incr=1):
@@ -504,6 +478,7 @@ class dvtDecimal:
             r += 1
             s = q * r / (p * r - q)
         return soluce
+
 ####################################################################
 ####################################################################
 

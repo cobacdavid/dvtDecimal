@@ -1,5 +1,8 @@
+# -*- coding: utf-8 -*-
 from .dvtDecimal import *
 
+
+version = '1.3.3'
 
 if __name__ == '__main__':
     # f = dvtDecimal(-604, 260)

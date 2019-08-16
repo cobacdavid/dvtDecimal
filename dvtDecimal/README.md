@@ -1,6 +1,9 @@
-*Due to slow computation of Egyptian Fraction (see end of this
-doc.), some variables have been transformed to methods since
-previous versions.*
+Recent changes:
+
+* add some (La)TeX output (see bottom of this page)
+
+* change `contFractionQ` function output
+
 
 This package provides a way to access repeating decimals in the
 decimal representation of rational numbers.
@@ -363,10 +366,93 @@ with it:
 
 >>> import math
 >>> contFractionQ(math.sqrt(2019))
-[44, 1, 13, 1, 88]
+[44, [1, 13, 1, 88]]
 
 ```
 
+The nested list is the periodic part of the continued fraction.
+
+
+### (La)TeX output
+
+Since 1.3.0 version, `dvtDecimal` offers some (La)TeX output
+functions. Actullaly this is native TeX, so that it doesn't require
+any special package.
+
+MY usage is to format continued fractions with `\displaystyle`, if
+you don't want them, just search and destroy with your (La)TeX
+editor!
+
+
+* `toTeX` method for `dvtDecimal` objects
+
+Outputs fraction (w/o dps!), mixed fraction and decimal
+representation.
+
+``` python3
+
+>>> f = dvtDecimal(1, 7)
+>>> f.toTeX()
+['{1\\over7}', '{0\\raise.21em\\hbox{$\\scriptscriptstyle\\frac{1}{7}$}}', '0.\\overline{142857}']
+>>> print(f.toTex()[1])
+{0\raise.21em\hbox{$\scriptscriptstyle\frac{1}{7}$}}
+
+```
+
+* `egToTeX` function
+
+Outputs egyptian fractions sum for list as argument. The list is
+typically output of the `egyptG2` method.
+
+``` python3
+
+>>> f = dvtDecimal(1, 7)
+>>> f.egyptG2()
+[8, 56]
+>>> egToTeX(f.egyptG2())
+'{1\\over8}+{1\\over56}'
+>>> print(egToTeX(f.egyptG2()))
+{1\over8}+{1\over56}
+
+```
+
+* continued fractions functions: `cfToTeX` and `cfQToTeX`
+
+First outputs full continued fraction of a finite (flat)
+list. Typically to use with `contFraction` method.
+
+``` python3
+
+>>> f = dvtDecimal(123, 43)
+>>> f.contFraction()
+[2, 1, 6, 6]
+>>> cfToTeX(f.contFraction())
+'2+\\displaystyle{\\strut1\\over\\displaystyle1+{\\strut1\\over\\displaystyle6+{\\strut1\\over6}}}'
+>>> print(cfToTeX(f.contFraction()))
+2+\displaystyle{\strut1\over\displaystyle1+{\strut1\over\displaystyle6+{\strut1\over6}}}
+
+```
+
+Last outputs partial continued fraction of a periodic continued
+fraction. Typically to use with `contFractionQ` function.
+
+So the list to provide contains numbers and a list (see
+`contFractionQ`) and needs an integer as a second argument: this is
+the index of the end, you'll get `\dots` in the last unit fraction.
+
+``` python3
+
+>>> import math
+>>> contFractionQ(math.sqrt(23))
+[4, [1, 3, 1, 8]]
+>>> cfQToTex(contFractionQ(math.sqrt(23)), 7)
+[4] [1, 3, 1, 8]
+'4+\\displaystyle{\\strut1\\over\\displaystyle1+{\\strut1\\over\\displaystyle3+{\\strut1\\over\\displaystyle1+{\\strut1\\over\\displaystyle8+{\\strut1\\over\\displaystyle1+{\\strut1\\over\\displaystyle3+{\\strut1\\over\\displaystyle\\dots}}}}}}}'
+>>> print(cfQToTex(contFractionQ(math.sqrt(23)), 7))
+[4] [1, 3, 1, 8]
+4+\displaystyle{\strut1\over\displaystyle1+{\strut1\over\displaystyle3+{\strut1\over\displaystyle1+{\strut1\over\displaystyle8+{\strut1\over\displaystyle1+{\strut1\over\displaystyle3+{\strut1\over\displaystyle\dots}}}}}}}
+
+```
 
 ### further
 
