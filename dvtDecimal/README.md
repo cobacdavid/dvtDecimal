@@ -1,9 +1,18 @@
-Recent changes:
+## Recent changes (1.3.6):
 
-* add some (La)TeX output (see bottom of this page)
+* add some more operations:
 
-* change `contFractionQ` function output
+``` python3
+>>> from dvtDecimal import *
+>>> f = dvtDecimal(1, 2)
+>>> 2 + f
+5/2
+>>> 5 * f
+5/2
+>>> f ** 3
+1/8
 
+```
 
 This package provides a way to access repeating decimals in the
 decimal representation of rational numbers.

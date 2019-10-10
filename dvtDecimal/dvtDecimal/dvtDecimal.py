@@ -274,7 +274,16 @@ class dvtDecimal:
         print("    Python outputs :", eval(self.fraction()))
 
     def __str__(self):
-        return self.fraction()
+        p, q = self.simpValues
+        reponse = ""
+        if q == 1:
+            reponse = str(p)
+        else:
+            reponse = str(p) + "/" + str(q)
+        return reponse
+
+    def __repr__(self):
+        return self.__str__()
 
     # n est le nombre de chiffres apres la virgule
     def dotWrite(self, n):
