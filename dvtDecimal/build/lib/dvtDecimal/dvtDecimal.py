@@ -122,8 +122,8 @@ class dvtDecimal:
             # si d est un dvtDecimal
             pp, qq = d.initValues
         except AttributeError:
-            # si d est un entier positif
-            if int(d) == abs(d):
+            # si d est un entier
+            if abs(round(d)) == abs(d):
                 pp, qq = d, 1
             else:
                 raise ValueError("Impossible *: value is not int\
@@ -138,13 +138,29 @@ class dvtDecimal:
             pp, qq = d.initValues
         except AttributeError:
             # si d est un entier positif
-            if int(d) == abs(d):
+            if abs(round(d)) == abs(d):
                 pp, qq = d, 1
             else:
                 raise ValueError("Impossible /: value is not int\
                 nor dvtDecimal!")
         return dvtDecimal(p * qq, pp * q)
 
+    def __pow__(self, autre):
+        p, q = self.initValues
+        return dvtDecimal(p ** autre, q ** autre)
+
+    def __radd__(self, autre):
+        """si on additionne flottant/eniter + dvtDecimal"""
+        return self.__add__(autre)
+
+    def __rsub__(self, autre):
+        """si on soustrait flottant/enter - dvtDecimal"""
+        autre = self.__sub__(autre)
+        return autre.__mul__(-1)
+
+    def __rmul__(self, autre):
+        """si on mulitplie flottant/enter - dvtDecimal"""
+        return self.__mul__(dvtDecimal(autre))
 ####################################################################
 ####################################################################
     def _gcd(self):
@@ -256,6 +272,9 @@ class dvtDecimal:
         print("    simp. fraction :", self.simpValues)
         print("               gcd :", self.gcd)
         print("    Python outputs :", eval(self.fraction()))
+
+    def __str__(self):
+        return self.fraction()
 
     # n est le nombre de chiffres apres la virgule
     def dotWrite(self, n):
