@@ -5,7 +5,7 @@ with open('README.md') as f:
 
 setup(
     name='dvtDecimal',
-    version='1.3.7',
+    version='1.3.8',
     description='Repeating digits of rational numbers',
     long_description_content_type='text/markdown',
     long_description=long_description,

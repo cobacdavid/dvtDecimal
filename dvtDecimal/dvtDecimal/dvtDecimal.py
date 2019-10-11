@@ -161,8 +161,10 @@ class dvtDecimal:
     def __rmul__(self, autre):
         """si on mulitplie flottant/enter - dvtDecimal"""
         return self.__mul__(dvtDecimal(autre))
+
 ####################################################################
 ####################################################################
+
     def _gcd(self):
         # on reprend les valeurs init
         a, b = self.__pInit, self.__qInit
@@ -178,6 +180,7 @@ class dvtDecimal:
 
 ####################################################################
 ####################################################################
+
     def _puissance10(self):
         while self.__q // 10 == self.__q / 10:
             self.__decalage += 1
@@ -216,7 +219,7 @@ class dvtDecimal:
             for i in range(self.__nbZ):
                 irr += "0"
             irr += str(self.__pi)
-        return irr
+        return float(irr)
 
     def mixedF(self):
         p, q = map(abs, self.simpValues)
@@ -287,11 +290,16 @@ class dvtDecimal:
 
     # n est le nombre de chiffres apres la virgule
     def dotWrite(self, n):
-        irr = str(self.irrPart())
+        # indispensable pour les eventuels 0 a la fin de
+        # la partie irreguliere et qui ne seraient pas visible
+        # en ecriture flottante
+        irr = "{:.{d}f}".format(self.irrPart(), d=self.__decalage)
+        if irr == "0.0":
+            irr = "0."
         rpc = self.repPartC()
         resultat = str(self.intPart)
         # on compte les longueurs (apres la virgule)
-        lpI = len(irr[2:])
+        lpI = self.__decalage
         lpP = len(rpc)
         if n <= lpI:
             resultat += irr[1:n+2]
@@ -303,7 +311,7 @@ class dvtDecimal:
                 resultat += rpc
             resultat += rpc[:(n-lpI) % lpP]
         return resultat
-   
+
     def isDecimal(self):
         return self.repPart == [0]
 
@@ -316,7 +324,7 @@ class dvtDecimal:
         e, p, q = self.mixedF()
         mF = "{" + str(e) + "\\raise.21em\hbox{$\\scriptscriptstyle\\frac{" + str(p) + "}{" + str(q) + "}$}}"
         #      
-        eD = str(e) + str(self.irrPart()[1:]) + \
+        eD = str(e) + str(self.irrPart())[1:] + \
             r"\overline{" + str(self.repPartC()) + "}"
         return [f, mF, eD]
 
