@@ -294,10 +294,14 @@ class dvtDecimal:
         # la partie irreguliere et qui ne seraient pas visible
         # en ecriture flottante
         irr = "{:.{d}f}".format(self.irrPart(), d=self.__decalage)
-        if irr == "0.0":
+        if irr == "0":
             irr = "0."
         rpc = self.repPartC()
         resultat = str(self.intPart)
+        # si le nombre est negatif avec une partie entiere nulle,
+        # alors on perd le signe !!
+        if self.intPart == 0 and self.sign == -1:
+            resultat = "-" + resultat
         # on compte les longueurs (apres la virgule)
         lpI = self.__decalage
         lpP = len(rpc)

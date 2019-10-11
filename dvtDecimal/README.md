@@ -1,6 +1,12 @@
-## Recent changes (1.3.6):
+## Recent changes
 
-* add some more operations:
+### 1.3.8 
+
+Fixed some bugs in `dotWrite` method and sign handling
+
+### 1.3.6:
+
+Add some more operations:
 
 ``` python3
 >>> from dvtDecimal import *
@@ -17,7 +23,7 @@
 This package provides a way to access repeating decimals in the
 decimal representation of rational numbers.
 
-### class object
+## class object
 
 ``` python3
 >>> from dvtDecimal import *
@@ -57,7 +63,7 @@ thus creating a number (w/o irregular part) between 0 and 1.
 In the example, 0.007650076500765... and so on.
 
 
-### object methods and variables
+## object methods and variables
 
 Once you created the object, you can access to those variables:
 
@@ -154,7 +160,7 @@ True
 ```
 
 
-### egyptian fractions
+## egyptian fractions
 
 IMPORTANT 1: Egyptian fractions features are quite slow (could be
 VERY slow) because it uses dvtDecimal representation of numbers
@@ -225,9 +231,9 @@ as so.
 So: 18/5 = 3 + 1/2 + 1/10
 
 
-### continued fractions
+## continued fractions
 
-#### what is implemented and what is not
+### what is implemented and what is not
 
 you can:
 
@@ -242,7 +248,7 @@ you cannot:
 
 * transform irrationals...
 
-#### some examples
+### some examples
 
 
 * Looking for continued fractions
@@ -382,7 +388,7 @@ with it:
 The nested list is the periodic part of the continued fraction.
 
 
-### (La)TeX output
+## (La)TeX output
 
 Since 1.3.0 version, `dvtDecimal` offers some (La)TeX output
 functions. Actullaly this is native TeX, so that it doesn't require
@@ -463,7 +469,7 @@ the index of the end, you'll get `\dots` in the last unit fraction.
 
 ```
 
-### further
+## further
 
 I hope to:
 
@@ -473,7 +479,7 @@ get succesive rational approximations ;
 * improve egyptian fractions methods to speed up calculations.
 
 
-### about
+## about
 
 dvtDecimal is rather an attempt to publish on the `PyPi` packages
 index than a fully completed python project, I do not recommend
