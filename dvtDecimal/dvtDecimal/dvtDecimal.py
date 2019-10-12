@@ -1,21 +1,24 @@
 # -*- coding: utf-8 -*-
-# import os
-# import sys
 from .dvtDecimalTools import *
 
 
 class dvtDecimal:
-    """classe d'écriture d'un nombre en fraction
-    à numérateur et dénominateur entiers.
+    """classe d'écriture d'un nombre en fraction à numérateur et
+    dénominateur entiers.
+
     Le principe est simple :
+
     - la fraction est simplifiée (pgcd)
-    - on fait en sorte que le dénominateur et 10
-    soient premiers entre eux
-    - on isole notre partie entière, notre partie
-    irégulière et notre fraction avec den. premier
-    avec 10
-    - on calcule par div. successives sur cette
-    dernière fraction notre partie qui se répète
+
+    - on fait en sorte que le dénominateur et 10 soient premiers
+    entre eux
+
+    - on isole notre partie entière, notre partie irégulière et
+    notre fraction avec den. premier avec 10
+
+    - on calcule par div. successives sur cette dernière fraction
+    notre partie qui se répète
+
     """
 
     def __init__(self, *args):
@@ -80,16 +83,6 @@ class dvtDecimal:
         num = int(s)
         den = int("9" * len(s))
         self._initFraction(num, den)
-
-####################################################################
-####################################################################
-    # def _intInputCheck(self):
-    #     try:
-    #         assert self.__pInit == int(self.__pInit)
-    #         assert self.__qInit == int(self.__qInit)
-    #     except AssertionError:
-    #         print('\nError: Use proper integers', self.__pInit, self.__qInit, '\n')
-    #         sys.exit(os.EX_DATAERR)
 
 ####################################################################
 ####################################################################
@@ -198,11 +191,6 @@ class dvtDecimal:
 
 ####################################################################
 ####################################################################
-
-    # def _puissance10(self):
-    #     while self.__q // 10 == self.__q / 10:
-    #         self.__decalage += 1
-    #         self.__q /= 10
 
     def _enleve2(self):
         while self.__q % 2 == 0:
@@ -349,88 +337,12 @@ class dvtDecimal:
         bs = "\\"
         f = "{" + str(self.__pInit) + bs + "over" + str(self.__qInit) + "}"
         e, p, q = self.mixedF()
-        mF = "{" + str(e) + "\\raise.21em\hbox{$\\scriptscriptstyle\\frac{" + str(p) + "}{" + str(q) + "}$}}"
-        #      
+        mF = "{" + str(e) + "\\raise.21em\hbox{$\\scriptscriptstyle\\frac{" +\
+            str(p) + "}{" + str(q) + "}$}}"
+        #
         eD = str(e) + str(self.irrPart())[1:] + \
             r"\overline{" + str(self.repPartC()) + "}"
         return [f, mF, eD]
-
-####################################################################
-####################################################################
-    # def __augmentation2(d, f, k, incr=1):
-    #     d[k] += incr
-    #     f[k + 1] = f[k] - 1 / d[k]
-    #     if f[k+1] <= 1e-10:
-    #         f[k+1] = 0
-    #     return d, f
-
-    # def egyptFractions2(self, eF=3, lim=10):
-    #     """recherche d'une somme de fractions unitaires
-    #     cf. fractions egyptiennes
-    #     Par défaut somme de 3 fractions
-    #     et un maximum de 10 solutions de sommes
-    #     """
-    #     #
-    #     _, p, q = self.mixedF()
-    #     #
-    #     # initialisation
-    #     solutions = []
-    #     d = [0] * eF
-    #     f = [0] * eF
-    #     # début
-    #     k = 0
-    #     d[0] = 1 + int(q / p)
-    #     f[0] = p / q
-    #     f[1] = f[0] - 1 / d[0]
-    #     c = 0
-    #     c += 1
-    #     print(c, d)
-    #     # quand on revient en dessous de 0
-    #     # c'est qu'on a trouvé toutes les
-    #     # solutions potentielles
-    #     while k > -1:
-    #         # test d'existence du dénominateur
-    #         # suivant
-    #         if d[k] * f[k] >= eF - k:
-    #             # ça n'a pas fonctionné, on change
-    #             # le dénominateur précédent et on recalcule
-    #             # la diff
-    #             k -= 1
-    #             if k > -1:
-    #                 #d[k] += 1
-    #                 #f[k + 1] = f[k] - 1 / d[k]
-    #                 d, f = dvtDecimal.__augmentation2(d, f, k)
-    #             c += 1
-    #             print(c, d)
-    #         # si on arrive sur l'avant-dernier
-    #         elif k == eF - 2:
-    #             # on teste si on a une solution
-    #             # avec le dénominateur
-    #             if f[eF - 1] >= 1e-10 and isInteger(1 / f[eF - 1]):
-    #                 d[eF-1] = round(1 / f[eF-1])
-    #                 # des solutions apparaissent qui n'en sont pas
-    #                 # par exemple sur 3/8
-    #                 # 1e8 un peu au hasard
-    #                 if d[eF-1] <= 1e8:
-    #                     solutions.append(d.copy())
-    #             # sinon on augmente le dénominateur
-    #             # et on recalcule la diff
-    #             d, f = dvtDecimal.__augmentation2(d, f, k)
-    #             c += 1
-    #             print(c, d)
-    #         else:
-    #             # on augmente le dénominateur
-    #             # on recalcule la diff.
-    #             k += 1
-    #             d[k] = 1 +max(d[k - 1], int(1 / f[k]))
-    #             f[k + 1] = f[k] - 1 / d[k]
-    #             #d, f = dvtDecimal.__augmentation2(d, f, k,
-    #             #        1 + max(d[k - 1], int(1 / f[k])))
-    #             c += 1
-    #             print(c, d)
-    #         if len(solutions) >= lim:
-    #             break
-    #     return solutions
 
     def __augmentation(d, f, k, incr=1):
         # !!! on incrémente ou on value
@@ -504,9 +416,8 @@ class dvtDecimal:
                 k += 1
                 g = unite / f[k]
                 gN = float(g.dotWrite(0))
-                aug = 1 + max(d[k - 1], round(gN))
-                d, f = dvtDecimal.__augmentation(d, f, k, \
-                        1 + max(d[k - 1], round(gN)))
+                d, f = dvtDecimal.__augmentation(d, f, k,
+                                                 1 + max(d[k - 1], round(gN)))
                 #
             if len(solutions) >= lim and lim != 0:
                 break
@@ -514,10 +425,10 @@ class dvtDecimal:
             #     del temp
             # except:
             #     pass
-        del temp
-        del g
-        del unite
-        del f
+        # del temp
+        # del g
+        # del unite
+        # del f
         return solutions
 
     def egyptG2(self):
@@ -552,3 +463,4 @@ class dvtDecimal:
             p, a, q = q, *divmod(p, q)
             f += [a]
         return f
+
