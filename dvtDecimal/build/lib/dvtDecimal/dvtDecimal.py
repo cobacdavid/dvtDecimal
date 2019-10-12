@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-import os
-import sys
+# import os
+# import sys
 from .dvtDecimalTools import *
 
 
@@ -21,7 +21,16 @@ class dvtDecimal:
     def __init__(self, *args):
         # si deux arguments : num et den
         if len(args) == 2:
-            self._initFraction(args[0], args[1])
+            n, d = args
+            # traitement des flottants
+            # effet de bord de la méthode suivante :
+            # on perd les initValues
+            if type(n) == float or type(d) == float:
+                n = dvtDecimal(n)
+                d = dvtDecimal(d)
+                f = n / d
+                n, d = f.simpValues
+            self._initFraction(n, d)
         # si un argument avec . : nombre décimal
         elif type(args[0]) == float:
             self._initFloat(args[0])
@@ -34,7 +43,7 @@ class dvtDecimal:
         else:
             print("Can't understand your input!")
             quit()
-    
+
     def _initFraction(self, p, q):
         """initialisation des objets de la classe"""
         # determination du signe
@@ -53,7 +62,7 @@ class dvtDecimal:
         self.__p = abs(p)
         self.__q = abs(q)
         # vérification de l'entrée
-        self._intInputCheck()
+        # self._intInputCheck()
         # 
         # Traitement
         # C'est ci-dessous que tout se passe
@@ -74,13 +83,13 @@ class dvtDecimal:
 
 ####################################################################
 ####################################################################
-    def _intInputCheck(self):
-        try:
-            assert self.__pInit == int(self.__pInit)
-            assert self.__qInit == int(self.__qInit)
-        except AssertionError:
-            print('\nError: Use proper integers', self.__pInit, self.__qInit, '\n')
-            sys.exit(os.EX_DATAERR)
+    # def _intInputCheck(self):
+    #     try:
+    #         assert self.__pInit == int(self.__pInit)
+    #         assert self.__qInit == int(self.__qInit)
+    #     except AssertionError:
+    #         print('\nError: Use proper integers', self.__pInit, self.__qInit, '\n')
+    #         sys.exit(os.EX_DATAERR)
 
 ####################################################################
 ####################################################################
@@ -88,79 +97,88 @@ class dvtDecimal:
         """définition de l'addition
         utilisable avec le symbole + ainsi surchargé"""
         p, q = self.initValues
-        try:
-            # si d est un dvtDecimal
+        if isinstance(d, dvtDecimal):
             pp, qq = d.initValues
-        except AttributeError:
-            # si d est un entier positif
-            if int(d) == abs(d):
-                pp, qq = d, 1
-            else:
-                raise ValueError("Impossible +: value is not int\
-                nor dvtDecimal!")
+        elif isinstance(d, int):
+            pp, qq = d, 1
+        elif isinstance(d, float):
+            sD = str(d)
+            iVirgule = sD.find('.')
+            puisDix = 10 ** (len(sD) - iVirgule - 1)
+            pp, qq = round(d * puisDix), puisDix
+        else:
+            raise ValueError("Impossible +: value is not \
+            compatible with dvtDecimal!")
         return dvtDecimal(p * qq + pp * q, q * qq)
 
     def __sub__(self, d):
         """voir addition"""
-        p, q = self.initValues
-        try:
-            # si d est un dvtDecimal
-            pp, qq = d.initValues
-        except AttributeError:
-            # si d est un entier positif
-            if int(d) == abs(d):
-                pp, qq = d, 1
-            else:
-                raise ValueError("Impossible -: value is not int\
-                nor dvtDecimal!")
-        return dvtDecimal(p * qq - pp * q, q * qq)
+        return self.__add__(-1 * d)
 
     def __mul__(self, d):
-        """voir addition"""
+        """surcharge de *"""
         p, q = self.initValues
-        try:
-            # si d est un dvtDecimal
+        if isinstance(d, dvtDecimal):
             pp, qq = d.initValues
-        except AttributeError:
-            # si d est un entier
-            if abs(round(d)) == abs(d):
-                pp, qq = d, 1
-            else:
-                raise ValueError("Impossible *: value is not int\
-                nor dvtDecimal!")
+        elif isinstance(d, int):
+            pp, qq = d, 1
+        elif isinstance(d, float):
+            sD = str(d)
+            iVirgule = sD.find('.')
+            puisDix = 10 ** (len(sD) - iVirgule - 1)
+            pp, qq = round(d * puisDix), puisDix
+        else:
+            raise ValueError("Impossible *: value is not \
+            compatible with dvtDecimal!")
         return dvtDecimal(p * pp, q * qq)
 
     def __truediv__(self, d):
-        """voir addition"""
+        """voir multiplication"""
         p, q = self.initValues
-        try:
-            # si d est un dvtDecimal
+        if isinstance(d, dvtDecimal) and d.initValues[0] != 0:
             pp, qq = d.initValues
-        except AttributeError:
-            # si d est un entier positif
-            if abs(round(d)) == abs(d):
-                pp, qq = d, 1
-            else:
-                raise ValueError("Impossible /: value is not int\
-                nor dvtDecimal!")
+        elif isinstance(d, int) and d != 0:
+            pp, qq = d, 1
+        elif isinstance(d, float) and d != 0:
+            sD = str(d)
+            iVirgule = sD.find('.')
+            puisDix = 10 ** (len(sD) - iVirgule - 1)
+            pp, qq = round(d * puisDix), puisDix
+        else:
+            raise ValueError("Impossible /: value is not \
+            compatible with dvtDecimal!")
         return dvtDecimal(p * qq, pp * q)
 
     def __pow__(self, autre):
         p, q = self.initValues
-        return dvtDecimal(p ** autre, q ** autre)
+        if autre > 0:
+            pp, qq = p ** autre, q ** autre
+        elif autre < 0:
+            pp, qq = q ** abs(autre), p ** abs(autre)
+        elif autre == 0 and p == 0:
+            pp, qq = 0, 1
+        else:
+            pp, qq = 1, 1
+        return dvtDecimal(pp, qq)
 
     def __radd__(self, autre):
-        """si on additionne flottant/eniter + dvtDecimal"""
+        """si on additionne flottant/entier + dvtDecimal"""
         return self.__add__(autre)
 
     def __rsub__(self, autre):
-        """si on soustrait flottant/enter - dvtDecimal"""
+        """si on soustrait flottant/entier - dvtDecimal"""
         autre = self.__sub__(autre)
         return autre.__mul__(-1)
 
     def __rmul__(self, autre):
-        """si on mulitplie flottant/enter - dvtDecimal"""
+        """si on multiplie flottant/entier * dvtDecimal"""
         return self.__mul__(dvtDecimal(autre))
+
+    def __rtruediv__(self, autre):
+        """si on divise flottant/entier / dvtDecimal"""
+        temp = self.__truediv__(autre)
+        p, q = temp.initValues
+        return dvtDecimal(q, p)
 
 ####################################################################
 ####################################################################
@@ -181,10 +199,10 @@ class dvtDecimal:
 ####################################################################
 ####################################################################
 
-    def _puissance10(self):
-        while self.__q // 10 == self.__q / 10:
-            self.__decalage += 1
-            self.__q /= 10
+    # def _puissance10(self):
+    #     while self.__q // 10 == self.__q / 10:
+    #         self.__decalage += 1
+    #         self.__q /= 10
 
     def _enleve2(self):
         while self.__q % 2 == 0:
@@ -240,16 +258,20 @@ class dvtDecimal:
 ####################################################################
     def _traitement(self):
         # attention travail négatif potentiel
-        self.simpValues = [k//self._gcd() for k in self.initValues]
-        self.intPart = int(self.__pInit / self.__qInit)
+        # on rend positif
+        self.simpValues = [abs(k) // self._gcd() for k in self.initValues]
+        # puis on ajoute le bon signe au numérateur
+        self.simpValues[0] *= self.sign
+        #
+        self.intPart = round(self.__pInit / self.__qInit)
         # valeurs positives requises pour le travail
         self.__p = abs(self.__pInit) - abs(self.__qInit) * abs(self.intPart)
         self.__p, self.__q = self.__p // self._gcd(), self.__q // self._gcd()
         # debut algo
-        self._puissance10()
+        # self._puissance10()
         self._enleve2()
         self._enleve5()
-        self.__pi = int(self.__p // self.__q)
+        self.__pi = round(self.__p // self.__q)
         self.__p = self.__p % self.__q
         # self._irrPart()
         self._calculPartiePeriodique(self.__p, self.__q)
@@ -268,13 +290,13 @@ class dvtDecimal:
 ####################################################################
     def dispResults(self):
         print("For fraction:", self.fraction())
-        print("    integer   part :", self.intPart)
-        print("    irregular part :", self.irrPart())
-        print("    periodic  part :", self.repPart)
-        print("    mixed fraction :", self.mixedF())
-        print("    simp. fraction :", self.simpValues)
-        print("               gcd :", self.gcd)
-        print("    Python outputs :", eval(self.fraction()))
+        print("    integer   part:", self.intPart)
+        print("    irregular part:", self.irrPart())
+        print("    periodic  part:", self.repPart)
+        print("    mixed fraction:", self.mixedF())
+        print("    simp. fraction:", self.simpValues)
+        print("               gcd:", self.gcd)
+        print("    Python outputs:", eval(self.fraction()))
 
     def __str__(self):
         p, q = self.simpValues
@@ -286,7 +308,8 @@ class dvtDecimal:
         return reponse
 
     def __repr__(self):
-        return self.__str__()
+        p, q = self.simpValues
+        return "dvtDecimal(" + str(p) + ", " + str(q) + ")"
 
     # n est le nombre de chiffres apres la virgule
     def dotWrite(self, n):

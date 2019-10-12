@@ -1,5 +1,37 @@
 ## Recent changes
 
+### 1.3.9
+
+1. Fixed some ambiguous sign handling
+
+2. Add difference between `__str__` and `__repr__` outputs:
+
+``` python3
+>>> import dvtDecimal as dD
+>>> f = dD.dvtDecimal(11, 7)
+>>> f
+dvtDecimal(11, 7)
+>>> print(f)
+11/7
+
+```
+
+3. Add some more operations
+
+``` python3
+>>> import dvtDecimal as dD
+>>> f = dD.dvtDecimal(2, 7)
+>>> 1 / f
+dvtDecimal(7, 2)
+>>> 2.5 * f
+dvtDecimal(5, 7)
+>>> 5.7 / f 
+dvtDecimal(399, 20)
+>>> f ** -2
+dvtDecimal(49, 4)
+
+```
+
 ### 1.3.8 
 
 Fixed some bugs in `dotWrite` method and sign handling
@@ -9,8 +41,8 @@ Fixed some bugs in `dotWrite` method and sign handling
 Add some more operations:
 
 ``` python3
->>> from dvtDecimal import *
->>> f = dvtDecimal(1, 2)
+>>> import dvtDecimal as dD
+>>> f = dD.dvtDecimal(1, 2)
 >>> 2 + f
 5/2
 >>> 5 * f
@@ -20,13 +52,16 @@ Add some more operations:
 
 ```
 
+
+# What is `dvtDecimal`
+
 This package provides a way to access repeating decimals in the
 decimal representation of rational numbers.
 
 ## class object
 
 ``` python3
->>> from dvtDecimal import *
+>>> import dvtDecimal as dD
 
 ```
 
@@ -38,24 +73,30 @@ number using:
 
 
 ``` python3
->>> f = dvtDecimal(-604, 260)
+>>> f = dD.dvtDecimal(-604, 260)
 
 ```
 
 for the fraction whose numerator is -604 and denominator is 260.
 
+Decimals ar allowed:
+
+``` python3
+>>> f = dD.dvtDecimal(-1.5, 2.8)
+
+```
 
 * or a decimal representation, it could be an integer
 
 ``` python3
->>> f = dvtDecimal(2.5)
+>>> f = dD.dvtDecimal(2.5)
 
 ```
 
 * or repeating decimals as a string
 
 ``` python3
->>> f = dvtDecimal('00765')
+>>> f = dD.dvtDecimal('00765')
 
 ```
 
@@ -117,7 +158,7 @@ For fraction: -604/260
 Entering via repeating decimals string allows:
 
 ``` python3
->>> f = dvtDecimal('0123456789')
+>>> f = dD.dvtDecimal('0123456789')
 >>> f.simpValues
 [13717421, 1111111111]
 
@@ -125,12 +166,12 @@ Entering via repeating decimals string allows:
 
 
 dvtDecimal also supports minimal operations (+,-,*,/) in between
-elements of the class but also with integers:
+elements of the class but also with integers or floats:
 
 
 ``` python3
->>> f = dvtDecimal(1, 5)
->>> g = dvtDecimal(10, 3)
+>>> f = dD.dvtDecimal(1, 5)
+>>> g = dD.dvtDecimal(10, 3)
 >>> h = f + g
 >>> h.mixedF()
 [3, 8, 15]
@@ -141,7 +182,7 @@ elements of the class but also with integers:
 ```
 
 ``` python3
->>> f = dvtDecimal(1, 5)
+>>> f = dD.dvtDecimal(1, 5)
 >>> g = 5
 >>> h = f * g
 >>> h.isDecimal()
@@ -151,8 +192,8 @@ True
 
 
 ``` python3
->>> f = dvtDecimal(1, 5)
->>> g = dvtDecimal(7, 5)
+>>> f = dD.dvtDecimal(1, 5)
+>>> g = dD.dvtDecimal(7, 5)
 >>> h = f - g
 >>> h.simpValues
 [-6, 5]
@@ -188,7 +229,7 @@ Two optional arguments:
 
 
 ``` python3
->>> f = dvtDecimal(18,5)
+>>> f = dD.dvtDecimal(18,5)
 >>> f.mixedF()
 [3, 3, 5]
 >>> f.egyptFractions()
@@ -220,7 +261,7 @@ The result may be an empty list since all numbers cannot be written
 as so.
 
 ``` python3
->>> f = dvtDecimal(18,5)
+>>> f = dD.dvtDecimal(18,5)
 >>> f.intPart
 3
 >>> f.egyptG2()
@@ -258,10 +299,10 @@ Below, search for 634 / 75 and for 3.14159265
 
 ``` python3
 
->>> f = dvtDecimal(634, 75)
+>>> f = dD.dvtDecimal(634, 75)
 >>> f.contFraction()
 [8, 2, 4, 1, 6]
->>> f = dvtDecimal(3.14159265)
+>>> f = dD.dvtDecimal(3.14159265)
 >>> f.contFraction()
 [3, 7, 15, 1, 288, 1, 2, 1, 3, 1, 7, 4]
 
@@ -279,7 +320,7 @@ We can observe that numbers are quickly false: true continued fraction of &#960;
 
 ``` python3
 
->>> f = dvtDecimal(634, 75)
+>>> f = dD.dvtDecimal(634, 75)
 >>> c = f.contFraction()
 >>> print(ratApp(c))
 [<dvtDecimal.dvtDecimal object at 0x7f40b8c9ec18>, <dvtDecimal.dvtDecimal object at 0x7f40b8c9ec50>, <dvtDecimal.dvtDecimal ob
@@ -291,7 +332,7 @@ ject at 0x7f40b8c9ec88>, <dvtDecimal.dvtDecimal object at 0x7f40b8c9ecc0>, <dvtD
 8+  4/9   8.4444444444
 8+  5/11  8.4545454545
 8+ 34/75  8.4533333333
->>> f = dvtDecimal(3.14159265)
+>>> f = dD.dvtDecimal(3.14159265)
 >>> c = f.contFraction()
 >>> for d in ratApp(c):
         print("{:<1}+{:>7}/{:<8}  {:<8}".format(*d.mixedF(), d.dotWrite(15)))
@@ -328,7 +369,7 @@ then using numerators (in mixed form).
 >>> mF = []
 >>> for a in range(7):
         aaS = round(aS,7-a)
-        f = dvtDecimal(aaS)
+        f = dD.dvtDecimal(aaS)
         c = f.contFraction()
         for d in ratApp(c):
             mF+=[d.mixedF()]
@@ -360,7 +401,7 @@ with it:
 
 ``` python3
 
->>> f = dvtDecimal(365.2425)
+>>> f = dD.dvtDecimal(365.2425)
 >>> c = f.contFraction()
 >>> for d in ratApp(c):
         print("{:<1}+{:>3}/{:<3}  {:<4}".format(*d.mixedF(), d.dotWrite(4)))
@@ -406,7 +447,7 @@ representation.
 
 ``` python3
 
->>> f = dvtDecimal(1, 7)
+>>> f = dD.dvtDecimal(1, 7)
 >>> f.toTeX()
 ['{1\\over7}', '{0\\raise.21em\\hbox{$\\scriptscriptstyle\\frac{1}{7}$}}', '0.\\overline{142857}']
 >>> print(f.toTex()[1])
@@ -421,7 +462,7 @@ typically output of the `egyptG2` method.
 
 ``` python3
 
->>> f = dvtDecimal(1, 7)
+>>> f = dD.dvtDecimal(1, 7)
 >>> f.egyptG2()
 [8, 56]
 >>> egToTeX(f.egyptG2())
@@ -438,7 +479,7 @@ list. Typically to use with `contFraction` method.
 
 ``` python3
 
->>> f = dvtDecimal(123, 43)
+>>> f = dD.dvtDecimal(123, 43)
 >>> f.contFraction()
 [2, 1, 6, 6]
 >>> cfToTeX(f.contFraction())
