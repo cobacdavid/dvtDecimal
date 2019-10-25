@@ -251,7 +251,7 @@ class dvtDecimal:
         # puis on ajoute le bon signe au numérateur
         self.simpValues[0] *= self.sign
         #
-        self.intPart = round(self.__pInit / self.__qInit)
+        self.intPart = int(self.__pInit / self.__qInit)
         # valeurs positives requises pour le travail
         self.__p = abs(self.__pInit) - abs(self.__qInit) * abs(self.intPart)
         self.__p, self.__q = self.__p // self._gcd(), self.__q // self._gcd()
